@@ -1,11 +1,15 @@
 import Link from "next/link"
+import { useEffect, useRef } from "react"
+import PhotoGallery from "../Photogallery"
 
 export function VideoClip(
     { src }
 ) {
     return (
-        <div>
-            <video controls style={{ height: "100%", width: "100%" }}>
+        <div className="flex flex-column flex-center w-100 h-100 bg-cover bg-center" style={{
+            backgroundColor:"#121212",
+        }}>
+            <video key={src} controls style={{ height: "100%", width: "100%" }}>
                 <source src={src} />
             </video>
         </div>
@@ -14,29 +18,25 @@ export function VideoClip(
 
 export function AudioClip({ src, coverSrc }) {
     return (
-        <div style={{
-            display: "flex",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+        <div className="flex padding-1 flex-column w-100 h-100 bg-cover bg-center" style={{
             backgroundImage: `url(${coverSrc})`,
+            justifyContent:"flex-end"
         }}>
-            <audio controls src={src} style={{ objectFit: "cover", width: "100%" }}></audio>
+            <audio key={src} controls src={src} className="w-100 shadow" style={{ objectFit: "cover" }}></audio>
         </div>
     )
 }
 
-export function PhotoGallery(
-    { numPhotos = 4 }
+export function Gallery(
+    { numPhotos = 4, basePath, }
 ) {
+
+    const photos = [...Array(numPhotos).keys()].map(d => "/media/" + basePath + "/" + "foto_"+((d+1) > 10 ? (d+1) : "0" + (d+1)) + ".jpg")
+    console.log(photos)
+
     return (
-        <div>
-
-        </div>
+        <PhotoGallery photos={photos} />
     )
-}
-
-export function Cover() {
-    return null
 }
 
 export function List({
@@ -54,7 +54,7 @@ export function List({
                                 <div className="text-3 text-em">{d.description}</div>
                             </div>
                             <div className="tag-single">
-                                <div className={"tag tag-outline tag-circle tag-" + d.tag_slug}/>
+                                <div className={"tag tag-outline tag-circle tag-" + d.tag_slug} />
                             </div>
                         </div>
                         <div style={{

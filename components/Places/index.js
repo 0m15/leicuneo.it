@@ -30,9 +30,9 @@ export function ListView({ places }) {
                                         <div className="text-2 text-700">{place.name}</div>
                                         <div className="text-3">{place.address}</div>
                                     </div>
-                                    <div className="text-3">
+                                    {place.distance!==undefined&&<div className="text-3">
                                         {place.distance<0.25?(place.distance*1000).toFixed(0)+"m":place.distance+"km"}
-                                    </div>
+                                    </div>}
                                 </div>
 
                                 <div className="tags-list flex">

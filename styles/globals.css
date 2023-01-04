@@ -124,7 +124,7 @@ p{margin:0!important}
 }
 
 .text-1 {
-  font-size: 1.5em;
+  font-size: 1.25em;
 }
 
 .text-2 {
@@ -199,9 +199,41 @@ p{margin:0!important}
   margin-left: -0.25em;
 }
 
+@media screen and (max-width: 480px) {
+  .button-list {
+    overflow: hidden;
+    overflow-x: auto;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    height: 6em;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0.25em;
+  }
+}
+
 .button-active {
   color: #e12862;
   border-color: currentColor;
+}
+
+/*bg*/
+.bg-cover {
+  background-size: cover;
+}
+
+.bg-center {
+  background-position: center center;
+}
+
+/* sizes */
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100%;
 }
 
 /* flex */
@@ -236,7 +268,7 @@ p{margin:0!important}
 
 /* spacing */
 .padding-1 {
-  padding: 1em;
+  padding: 0.85em;
 }
 
 .padding-2 {
@@ -248,19 +280,19 @@ p{margin:0!important}
 }
 
 .pt-1 {
-  padding-top: 1em;
+  padding-top: 0.85em;
 }
 
 .pb-1 {
-  padding-bottom: 1em;
+  padding-bottom: 0.85em;
 }
 
 .pl-1 {
-  padding-left: 1em;
+  padding-left: 0.85em;
 }
 
 .pr-1 {
-  padding-right: 1em;
+  padding-right: 0.85em;
 }
 
 /* scroller */
@@ -277,7 +309,7 @@ p{margin:0!important}
 
 /* separators */
 .separator {
-  border-bottom: 2px solid;
+  border-bottom: 2px solid rgba(0,0,0,.25);
 }
 
 .separator-light {
@@ -301,7 +333,7 @@ p{margin:0!important}
 }
 
 .list-item.padding-1 {
-  padding-bottom: 1.5em;
+  /* padding-bottom: 1.5em; */
 }
 
 /* tags */
@@ -322,6 +354,7 @@ p{margin:0!important}
 
 .tag-fill {
   background-color: currentColor;
+  fill: currentColor;
 }
 
 .tag-outline {
@@ -329,40 +362,83 @@ p{margin:0!important}
   background-color: transparent;
 }
 
+.button-tag:not(.button-active) {
+  /* border-color: inherit; */
+  color: initial;
+}
+
 /* tag colors */ 
 .tag-cantastorie,
 .tag_1 {
   color: #005f73
+}
+.tag-cantastorie.button-active {
+  background-color: #005f73;
+  color: white;
 }
 
 .tag-audioguide,
 .tag_2 {
   color: #0a9396
 }
+.tag-audioguide.button-active {
+  background-color: #0a9396;
+  color: white;
+}
 
 .tag-fotogallery,
 .tag_3 {
   color: #94d2bd
+}
+.tag-fotogallery.button-active {
+  background-color: #94d2bd;
+  color: white;
 }
 
 .tag-musica-e-arti-performative,
 .tag_4 {
   color: #f08080
 }
+.tag-musica-e-arti-performative.button-active {
+  background-color: #f08080;
+  color: white;
+}
 
 .tag-documentari-e-storie,
 .tag_5 {
   color: #ee9b00
+}
+.tag-documentari-e-storie.button-active {
+  background-color: #ee9b00;
+  color: white;
 }
 
 .tag-ricordi,
 .tag_6 {
   color: #bb3e03
 }
+.tag-ricordi.button-active {
+  background-color: #bb3e03;
+  color: white;
+}
 
 .tag-la-valigia-del-migrante,
 .tag_7 {
   color: #9b2327
+}
+.tag-la-valigia-del-migrante.button-active {
+  background-color: #9b2327;
+  color: white;
+}
+
+.subtag {
+  font-size: 0.75em;
+  border-radius: 0;
+}
+
+.subtag.button-active {
+  background-color:rgb(255, 126, 79	);
+  color: inherit;
 }
 
 /* ui behaviours */
@@ -370,4 +446,9 @@ p{margin:0!important}
   position: sticky;
   top:0;
   box-shadow: 0 0 8px rgba(0,0,0,.25);
+}
+
+.shadow {
+  box-shadow: 0 0 8px rgba(0,0,0,.25);
+
 }

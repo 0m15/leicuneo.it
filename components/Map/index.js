@@ -1,10 +1,12 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Map, { Marker, useControl, useMap } from 'react-map-gl';
+import Map, { Marker, Popup, useControl, useMap } from 'react-map-gl';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Pin } from '../../components/Marker';
 import { useGeolocation } from 'react-use';
 import { location, state } from '../../store';
 import { useSnapshot } from 'valtio';
+import { groupBy } from '../../utils';
+import Link from 'next/link';
 
 const MAPBOX_TOKEN = "pk.eyJ1IjoiYXVyb3JhbWVjY2FuaWNhIiwiYSI6ImNsMnN3NWU5ZzAydTkzY2xydG8xdzB2dXEifQ.CUgsrj8QK3zSeDdUejuwmw"
 
@@ -105,23 +107,37 @@ function GeolocationButton({
 }
 
 export default function MapView(props) {
+    const grouped = useMemo(() => {
+        return groupBy(props.places, "place_id")
+    }, [props.places])
+
+    const [popup, setPopupInfo] = useState(null)
+
     const pins = useMemo(
-        () =>
-            props.places.map((place, index) => (
+        () => {
+            if (!grouped) return []
+
+            return grouped.map((place, index) => (
                 <Marker
                     key={`marker-${index}`}
                     longitude={place.latlng[1]}
                     latitude={place.latlng[0]}
                     anchor="bottom"
+                    
                     onClick={e => {
                         e.originalEvent.stopPropagation();
-                        // setPopupInfo(place);
+                        setPopupInfo(place);
                     }}
                 >
-                    <Pin />
+                    <Pin
+                    isActive={popup===place}
+                        id={place.place_id}
+                        tags={[place, ...place.children]}
+                    />
                 </Marker>
-            )),
-        [props.places]
+            ))
+        },
+        [grouped, popup]
     );
 
     return (
@@ -137,6 +153,31 @@ export default function MapView(props) {
             mapboxAccessToken={MAPBOX_TOKEN}
         >
             {pins}
+
+            {popup &&
+                <Popup
+                    anchor="top"
+                    longitude={Number(popup.latlng[1])}
+                    latitude={Number(popup.latlng[0])}
+                    onClose={() => setPopupInfo(null)}
+                >
+                    <Link href={`/places/${popup.slug}`}>
+                        <div className='text-2 text-700' style={{ fontFamily: "Besley", lineHeight: 1 }}>
+                            {popup.name}
+                        </div>
+                        <div className='text-3 text-500' style={{ fontFamily: "Besley" }}>
+                            {popup.address}
+                        </div>
+                        <div className="tags-list flex">
+                            {
+                                popup.children.map((d, i) => {
+                                    return <div key={i} className={"tag tag-circle tag-fill tag-" + d.tag_slug} title={d.tag}></div>
+                                })
+                            }
+                        </div>
+                    </Link>
+                </Popup>
+            }
             <MapController places={props.places} />
             <div style={{ position: "absolute", bottom: "3rem", right: "1.75rem", zIndex: 100, width: "30px" }}>
                 <GeolocationButton />

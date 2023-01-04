@@ -83,7 +83,7 @@ function Tags({ places, all, onSelectionChanged = (selectedTag) => { } }) {
         {tags.map((d, i) => {
           return (
             <button
-              className={`button button-2 ${d == activeTag.tag ? "button-active" : ""}`}
+              className={`button button-2 button-tag tag-${tagsId[i]} ${d == activeTag.tag ? "button-active" : ""}`}
               onClick={onClickTag(d)}
               key={d}>
               {d}
@@ -95,7 +95,7 @@ function Tags({ places, all, onSelectionChanged = (selectedTag) => { } }) {
           {subtags.map((d, i) => {
             return (
               <button
-                className={`button button-2 ${d == activeTag.subtag ? "button-active" : ""}`}
+                className={`button subtag button-subtag button-2 ${d == activeTag.subtag ? "button-active" : ""}`}
                 onClick={onClickSubtag(d)}
                 key={d}>
                 {d}
@@ -168,7 +168,7 @@ function MainContent({ all }) {
             <button className={"button button-ghost " + (tab == 1 ? "button-active" : "")} onClick={onClickTab(1)}>Contenuti</button>
           </div>
           <>
-            {tab == 0 && <ListView places={filtered} />}
+            {tab == 0 && <ListView places={all} />}
             {tab == 1 && <Tags onSelectionChanged={onTagsChanged} places={filtered} all={all} />}
           </>
         </div>
@@ -183,6 +183,9 @@ export default function Index(props) {
   const locationState = useSnapshot(location)
 
   useEffect(() => {
+
+    if(locationState.latitude==null||locationState.longitude==null) return
+
     setAll(cur => {
       return cur.map((d, i) => {
         return {
@@ -192,8 +195,6 @@ export default function Index(props) {
       })
     })  
   }, [locationState.latitude, locationState.longitude]);
-
-  console.log(all)
 
   return (
     <div className="flex-column" style={{ height: "100%" }}>

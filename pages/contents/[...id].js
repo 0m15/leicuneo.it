@@ -1,5 +1,9 @@
+import Link from "next/link"
+import { useSnapshot } from "valtio"
 import { RelatedContent } from "../../components/Contents"
-import { AudioClip, VideoClip } from "../../components/Media"
+import { MapMarker } from "../../components/Icons"
+import { AudioClip, Gallery, VideoClip } from "../../components/Media"
+import { state } from "../../store"
 import { toSlug } from "../../utils"
 import data from "../data.json"
 
@@ -32,21 +36,33 @@ export function getStaticProps({ params }) {
     }
 }
 
-export default function Post({ name, address, description, media_type, path, relatedPlaces, relatedContent }) {
+export default function Post({ name, address, photo, meta_4, description, media_type, path, relatedPlaces, relatedContent }) {
 
     const baseUrl = path
 
-    return (<article>
-        <h1>{name}</h1>
-        <div>{description}</div>
-        <div>
+    const coverSrc = `/media/${path}/copertina.jpg`
+
+    return (<article className="flex flex-column h-100">
+        <div className="padding-1">
+            <div className="flex space-between w-100 items-center">
+                <div>
+                    <h1 className="text-2">{name}</h1>
+                    <div className="text-3">{description}</div>
+                    <div className="text-3 text-em">{meta_4}</div>
+                </div>
+                <div className="pl-1">
+                    <Link href="/">
+                        <MapMarker />
+                    </Link>
+                </div>
+            </div>
+        </div>
+        <div style={{ height: "50%" }} className="flex flex-column flex-center">
             {media_type === "video" && <VideoClip src={`/media/${path}/video.mp4`} />}
-            {media_type === "audio" || media_type === "podcast" && <AudioClip src={`/media/${path}/audio.mp3`} />}
+            {(media_type === "audio" || media_type === "podcast") && <AudioClip coverSrc={coverSrc} src={`/media/${path}/${media_type}.mp3`} />}
             {media_type === "pdf" && <div>PDF</div>}
-            {media_type === "gallery" && <div>gallery</div>}
+            {media_type === "gallery" && <Gallery basePath={path} numPhotos={photo} />}
         </div>
-        <div>
-            <RelatedContent relatedContent={relatedContent} relatedPlaces={relatedPlaces} />
-        </div>
+        <RelatedContent relatedContent={relatedContent} relatedPlaces={relatedPlaces} />
     </article>)
 }

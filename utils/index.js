@@ -24,7 +24,7 @@ export function calcDistance(lat1, lon1, lat2, lon2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
 
-    if(d<=1) {
+    if (d <= 1) {
         return d.toFixed(2)
     }
 
@@ -34,4 +34,13 @@ export function calcDistance(lat1, lon1, lat2, lon2) {
 // Converts numeric degrees to radians
 function toRad(Value) {
     return Value * Math.PI / 180;
+}
+
+export function groupBy(array, key) {
+    return Object.values(array.reduce((result, currentValue) => {
+        (result[currentValue[key]] = result[currentValue[key]] || []).push(currentValue);
+        return result;
+    }, {}))
+        .map(children => ({ ...children[0], children }))
+        .sort((a, b) => a.distance - b.distance);
 }

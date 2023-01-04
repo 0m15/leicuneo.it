@@ -10,10 +10,29 @@ const pinStyle = {
   stroke: 'none'
 };
 
-function PinComponent({size = 20}) {
+function PinComponent({size = 20, id, isActive, tags}) {
+
+    const uniqueTags = React.useMemo(()=> {
+        return [...new Set(tags.map(d=>d.tag))]
+    }, [tags])
+
+    const uniqueTagsId = React.useMemo(()=> {
+        return [...new Set(tags.map(d=>d.tag_slug))]
+    }, [tags])
+
   return (
     <svg height={size} viewBox="0 0 24 24" style={pinStyle}>
-      <path d={ICON} />
+        <defs>
+            <clipPath id={"mask"+id}>
+                <path d={ICON}></path>
+            </clipPath>
+        </defs>
+        {
+            uniqueTags.map((d, i) => {
+                const w = 24/uniqueTags.length;
+                return <rect fill="#fff" key={i} x={i*w} width={w} height={30} className={isActive ? "tag-fill tag-"+uniqueTagsId[i] : ""} clipPath={`url(#mask${id})`} />
+            })
+        }
     </svg>
   );
 }
