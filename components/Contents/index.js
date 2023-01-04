@@ -6,7 +6,7 @@ export function ListView({ contents }) {
         <div className="list-view  scroller-y">
             {contents.map((d, i) => {
                 return (
-                    <Link href={`/contents/${d.path}`} key={i} className="list-item list-item-link">
+                    <Link href={`/contents/${d.path}`} key={i} className="list-item list-item-link padding-1">
                         <div className="text-2">
                             {d.description}
                         </div>

@@ -1,3 +1,4 @@
 import { proxy, useSnapshot } from 'valtio'
 
-export const state = proxy({ activeTag: null, activeSubtag: null, showContentsPopover: false, })
+export const state = proxy({ centerUserLocation: false, showContentsPopover: false })
+export const location = proxy({ latitude: null, longitude: null })

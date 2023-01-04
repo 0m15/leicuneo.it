@@ -47,14 +47,14 @@ export function List({
         <div className="list">
             {
                 items.map((d, i) => {
-                    return <Link href={`/contents/${d.path}`} key={i} className="list-item">
-                        <div className="flex flex-center flex-space-around">
+                    return <Link href={`/contents/${d.path}`} key={i} className="list-item shadow padding-1">
+                        <div className="flex space-between">
                             <div>
-                                <div className="text-1">{d.tag}</div>
+                                <div className="text-2 text-700">{d.tag}</div>
                                 <div className="text-3 text-em">{d.description}</div>
                             </div>
-                            <div>
-
+                            <div className="tag-single">
+                                <div className={"tag tag-outline tag-circle tag-" + d.tag_slug}/>
                             </div>
                         </div>
                         <div style={{

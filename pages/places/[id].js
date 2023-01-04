@@ -16,14 +16,18 @@ export function getStaticProps({ params }) {
 
     const posts = data
     const post = posts.find((d, i) => toSlug(d.name) == id)
-    const children = posts.filter(d=>toSlug(d.name) == id)
+    const children = posts.filter(d => toSlug(d.name) == id).map(d => ({
+        ...d,
+        tag_slug: toSlug(d.tag),
+        slug: toSlug(d.name),
+    }))
 
     return {
-        props: {...post, children}
+        props: { ...post, children }
     }
 }
 
-export default function Post({ name, address, description, path, children}) {
+export default function Post({ name, address, description, path, children }) {
 
     const baseUrl = path.split("/")[0]
 
@@ -35,11 +39,12 @@ export default function Post({ name, address, description, path, children}) {
                 minHeight: 480,
                 backgroundImage: `url(/media/${baseUrl}/copertina.jpg)`
             }} />
-        <h1>{name}</h1>
-        <div>{address}</div>
-
+        <div className="sticky bg-white padding-1">
+            <h1 className="text-1 text-800">{name}</h1>
+            <div className="text-700">{address}</div>
+        </div>
         <div>
-            <List items={children}/>
+            <List items={children} />
         </div>
     </article>)
 }

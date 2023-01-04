@@ -1,5 +1,6 @@
 import { RelatedContent } from "../../components/Contents"
 import { AudioClip, VideoClip } from "../../components/Media"
+import { toSlug } from "../../utils"
 import data from "../data.json"
 
 export function getStaticPaths() {
@@ -15,8 +16,16 @@ export function getStaticPaths() {
 export function getStaticProps({ params }) {
     //https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes
     const post = data.find((d, i) => d.path == params.id.join("/"))
-    const relatedContent = data.filter((d, i) => d.path.split("/")[0] == params.id[0]&&d.path!==post.path)
-    const relatedPlaces = data.filter((d, i) => d.tag == post.tag&&d.path!==post.path)
+    const relatedContent = data.filter((d, i) => d.path.split("/")[0] == params.id[0] && d.path !== post.path).map(d => ({
+        ...d,
+        tag_slug: toSlug(d.tag),
+        slug: toSlug(d.name),
+    }))
+    const relatedPlaces = data.filter((d, i) => d.tag == post.tag && d.path !== post.path).map(d => ({
+        ...d,
+        tag_slug: toSlug(d.tag),
+        slug: toSlug(d.name),
+    }))
 
     return {
         props: { ...post, relatedContent, relatedPlaces }
@@ -32,9 +41,9 @@ export default function Post({ name, address, description, media_type, path, rel
         <div>{description}</div>
         <div>
             {media_type === "video" && <VideoClip src={`/media/${path}/video.mp4`} />}
-            {media_type === "audio"||media_type === "podcast" && <AudioClip src={`/media/${path}/audio.mp3`} />}
-            {media_type === "pdf"&&<div>PDF</div>}
-            {media_type === "gallery"&&<div>gallery</div>}
+            {media_type === "audio" || media_type === "podcast" && <AudioClip src={`/media/${path}/audio.mp3`} />}
+            {media_type === "pdf" && <div>PDF</div>}
+            {media_type === "gallery" && <div>gallery</div>}
         </div>
         <div>
             <RelatedContent relatedContent={relatedContent} relatedPlaces={relatedPlaces} />
