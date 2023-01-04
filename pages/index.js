@@ -7,7 +7,7 @@ import { Navbar } from '../components/Navbar';
 import { ListView } from '../components/Places';
 import { location, state } from '../store';
 import { calcDistance, toSlug } from '../utils';
-import data from "./data.json";
+import data from "../data.json";
 
 const MAPBOX_TOKEN = "pk.eyJ1IjoiYXVyb3JhbWVjY2FuaWNhIiwiYSI6ImNsMnN3NWU5ZzAydTkzY2xydG8xdzB2dXEifQ.CUgsrj8QK3zSeDdUejuwmw"
 

@@ -35,7 +35,6 @@ export default function PhotoGallery({
 
     //reset carousel hack
     useEffect(() => {
-        console.log("reeees")
         api.stop()
         index.current = 0
 

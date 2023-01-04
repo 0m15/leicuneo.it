@@ -32,7 +32,6 @@ export function Gallery(
 ) {
 
     const photos = [...Array(numPhotos).keys()].map(d => "/media/" + basePath + "/" + "foto_"+((d+1) > 10 ? (d+1) : "0" + (d+1)) + ".jpg")
-    console.log(photos)
 
     return (
         <PhotoGallery photos={photos} />

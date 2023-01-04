@@ -5,11 +5,11 @@ import { MapMarker } from "../../components/Icons"
 import { AudioClip, Gallery, VideoClip } from "../../components/Media"
 import { state } from "../../store"
 import { toSlug } from "../../utils"
-import data from "../data.json"
+import data from "../../data.json"
 
 export function getStaticPaths() {
     //https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes
-    const paths = data.map((d) => ({ params: { id: d.path.split("/") } }))
+    const paths = data.filter(d=>d.path?.length>0).map((d) => ({ params: { id: d.path.split("/") } }))
 
     return {
         paths: paths,

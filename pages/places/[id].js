@@ -2,18 +2,18 @@ import Link from "next/link"
 import { MapMarker } from "../../components/Icons"
 import { List } from "../../components/Media"
 import { toSlug } from "../../utils"
-import data from "../data.json"
+import data from "../../data.json"
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
     const posts = data
 
     return {
-        paths: posts.map((d) => ({ params: { id: "" + toSlug(d.name) } })),
+        paths: posts.filter(d => d.name?.length > 0).map((d) => ({ params: { id: toSlug(d.name) || "404" } })),
         fallback: false, // can also be true or 'blocking'
     }
 }
 
-export function getStaticProps({ params }) {
+export async function getStaticProps({ params }) {
     const { id } = params
 
     const posts = data
