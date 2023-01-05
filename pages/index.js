@@ -1,111 +1,119 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSnapshot } from 'valtio';
-import { ListView as ContentsListView } from '../components/Contents';
-import MapView from '../components/Map';
-import { Navbar } from '../components/Navbar';
-import { ListView } from '../components/Places';
-import { location, state } from '../store';
-import { calcDistance, toSlug } from '../utils';
+import "mapbox-gl/dist/mapbox-gl.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSnapshot } from "valtio";
+import { ListView as ContentsListView } from "../components/Contents";
+import MapView from "../components/Map";
+import { Navbar } from "../components/Navbar";
+import { ListView } from "../components/Places";
+import { location, state, tagsSelection } from "../store";
+import { calcDistance, toSlug } from "../utils";
 import data from "../data.json";
+import { useMemoOne } from "@react-spring/shared";
 
-const MAPBOX_TOKEN = "pk.eyJ1IjoiYXVyb3JhbWVjY2FuaWNhIiwiYSI6ImNsMnN3NWU5ZzAydTkzY2xydG8xdzB2dXEifQ.CUgsrj8QK3zSeDdUejuwmw"
+const MAPBOX_TOKEN =
+  "pk.eyJ1IjoiYXVyb3JhbWVjY2FuaWNhIiwiYSI6ImNsMnN3NWU5ZzAydTkzY2xydG8xdzB2dXEifQ.CUgsrj8QK3zSeDdUejuwmw";
 
 export async function getStaticProps({ query }) {
-  const places = data.filter(d => d.latlng?.trim().length > 0).map(d => {
-    let latlng = d.latlng.split(",").map(d => parseFloat(d))
+  const places = data
+    .filter((d) => d.latlng?.trim().length > 0)
+    .map((d) => {
+      let latlng = d.latlng.split(",").map((d) => parseFloat(d));
 
-    return {
-      ...d,
-      tag_slug: toSlug(d.tag),
-      slug: toSlug(d.name),
-      latlng,
-    }
-  })
+      return {
+        ...d,
+        tag_slug: toSlug(d.tag),
+        slug: toSlug(d.name),
+        latlng,
+      };
+    });
 
   return {
     props: {
-      places
-    }
-  }
+      places,
+    },
+  };
 }
 
-function Tags({ places, all, onSelectionChanged = (selectedTag) => { } }) {
+function Tags({ places, all, onSelectionChanged = (selectedTag) => {} }) {
+  const selected = useSnapshot(tagsSelection);
 
-  const [activeTag, setActiveTag] = useState({
-    tag: null,
-    subtag: null,
-  })
+  const uniqueTags = useMemoOne(() => {
+    return [
+      ...new Set(all.filter((d) => d.tag?.trim().length > 0).map((d) => d.tag)),
+    ];
+  }, []);
 
-  const tags = useMemo(() => {
-    return [...new Set(all.filter(d => d.tag?.trim().length > 0).map(d => d.tag))]
-  }, [])
+  const uniqueSubtags = useMemoOne(() => {
+    return [
+      ...new Set(
+        all.filter((d) => d.subtag?.trim().length > 0).map((d) => d.subtag)
+      ),
+    ];
+  }, []);
 
-  const subtags = useMemo(() => {
-    return [...new Set(all.filter(d => d.subtag?.trim().length > 0).map(d => d.subtag))]
-  }, [])
+  const uniqueTagsId = useMemoOne(() => {
+    return [
+      ...new Set(
+        all.filter((d) => d.tag_slug?.trim().length > 0).map((d) => d.tag_slug)
+      ),
+    ];
+  }, []);
 
-  const tagsId = useMemo(() => {
-    return [...new Set(all.filter(d => d.tag_slug?.trim().length > 0).map(d => d.tag_slug))]
-  }, [])
+  const onClickTag = useCallback(
+    (t) => () => {
+      tagsSelection.tag = t === tagsSelection.tag ? null : t;
+      (tagsSelection.subtag =
+        t !== "La valigia del Migrante" ? null : tagsSelection.subtag),
+        onSelectionChanged(tagsSelection);
+    },
+    []
+  );
 
-  const onClickTag = useCallback((t) => () => {
-    setActiveTag(cur => {
-      const nextSel = {
-        tag: t == cur.tag ? null : t,
-        subtag: t !== "La valigia del Migrante" ? null : cur.subtag,
-      }
-
-      onSelectionChanged(nextSel)
-      return nextSel
-    })
-  }, [])
-
-  const onClickSubtag = useCallback((t) => () => {
-
-    setActiveTag(cur => {
-
-      const nextSel = {
-        ...cur,
-        subtag: cur.subtag === t ? null : t,
-      }
-
-      onSelectionChanged(nextSel)
-
-      return nextSel
-    })
-
-  }, [])
+  const onClickSubtag = useCallback(
+    (t) => () => {
+      (tagsSelection.subtag = tagsSelection.subtag === t ? null : t),
+        onSelectionChanged(tagsSelection);
+    },
+    []
+  );
 
   return (
     <>
-      <div className='padding-1 button-list'>
-        {tags.map((d, i) => {
+      <div className="padding-1 button-list">
+        {uniqueTags.map((d, i) => {
           return (
             <button
-              className={`button button-2 button-tag tag-${tagsId[i]} ${d == activeTag.tag ? "button-active" : ""}`}
+              className={`button button-2 button-tag tag-${uniqueTagsId[i]} ${
+                d == selected.tag ? "button-active" : ""
+              }`}
               onClick={onClickTag(d)}
-              key={d}>
+              key={d}
+            >
               {d}
             </button>
-          )
+          );
         })}
 
-        {activeTag.tag == "La Valigia del Migrante" && <div>
-          {subtags.map((d, i) => {
-            return (
-              <button
-                className={`button subtag button-subtag button-2 ${d == activeTag.subtag ? "button-active" : ""}`}
-                onClick={onClickSubtag(d)}
-                key={d}>
-                {d}
-              </button>
-            )
-          })}
-        </div>}
+        {selected.tag === "La Valigia del Migrante" && (
+          <div>
+            {uniqueSubtags.map((d, i) => {
+              return (
+                <button
+                  className={`button subtag button-subtag button-2 ${
+                    d == selected.subtag ? "button-active" : ""
+                  }`}
+                  onClick={onClickSubtag(d)}
+                  key={d}
+                >
+                  {d}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
-      <div className='pl-1'>
-        <div className='text-700'>
+      <div className="pl-1">
+        <div className="text-700">
           {places.length > 1 && places.length + " risultati"}
           {places.length === 1 && "1 risultato"}
           {places.length === 0 && "nessun risultato"}
@@ -116,45 +124,35 @@ function Tags({ places, all, onSelectionChanged = (selectedTag) => { } }) {
       </div>
       <ContentsListView contents={places} />
     </>
-  )
+  );
 }
 
 function MainContent({ all }) {
+  const [filtered, setFiltered] = useState([...all]);
+  const ui = useSnapshot(state);
+  const tags = useSnapshot(tagsSelection);
 
-  const [tab, setTab] = useState(0)
-  const [tag, setTag] = useState(null)
-  const [filtered, setFiltered] = useState([...all])
-
-  const onClickTab = useCallback((tabId) => () => {
-    setTab(tabId)
-  }, [])
-
-  const onTagsChanged = useCallback((tag) => {
-    if (tag.tag === null) {
-      setTag(null)
-      return
-    }
-
-    setTag(tag)
-  }, [])
+  const onClickTab = useCallback(
+    (tabId) => () => {
+      state.tab = tabId;
+    },
+    []
+  );
 
   useEffect(() => {
-    if (tag === null) {
-      setFiltered([...all])
-      return
+    if (tags.tag === null) {
+      setFiltered([...all]);
+      return;
     }
 
-    let filtered = all.filter(d => d.tag == tag.tag)
+    let filtered = all.filter((d) => d.tag == tags.tag);
 
-    if (tag.subtag) {
-      filtered = filtered.filter(d => d.subtag == tag.subtag)
+    if (tags.subtag) {
+      filtered = filtered.filter((d) => d.subtag == tags.subtag);
     }
 
-    setFiltered(filtered)
-
-  }, [all, tag])
-
-  const ui = useSnapshot(state)
+    setFiltered(filtered);
+  }, [all, tags]);
 
   return (
     <>
@@ -162,38 +160,56 @@ function MainContent({ all }) {
         <MapView places={filtered} all={all} />
       </div>
       {ui.showContentsPopover && (
-        <div className="flex flex-column" style={{ height: 480, zIndex: 1 }}>
+        <div className="flex flex-column" style={{ height: "50%", zIndex: 1 }}>
           <div className="flex flex-center button-list padding-1 separator">
-            <button className={"button button-ghost " + (tab == 0 ? "button-active" : "")} onClick={onClickTab(0)}>Tutti i luoghi</button>
-            <button className={"button button-ghost " + (tab == 1 ? "button-active" : "")} onClick={onClickTab(1)}>Contenuti</button>
+            <button
+              className={
+                "button button-ghost " + (ui.tab == 0 ? "button-active" : "")
+              }
+              onClick={onClickTab(0)}
+            >
+              Tutti i luoghi
+            </button>
+            <button
+              className={
+                "button button-ghost " + (ui.tab == 1 ? "button-active" : "")
+              }
+              onClick={onClickTab(1)}
+            >
+              Contenuti
+            </button>
           </div>
           <>
-            {tab == 0 && <ListView places={all} />}
-            {tab == 1 && <Tags onSelectionChanged={onTagsChanged} places={filtered} all={all} />}
+            {ui.tab == 0 && <ListView places={all} />}
+            {ui.tab == 1 && <Tags places={filtered} all={all} />}
           </>
         </div>
       )}
     </>
-
-  )
+  );
 }
 
 export default function Index(props) {
-  const [all, setAll] = useState([...props.places])
-  const locationState = useSnapshot(location)
+  const [all, setAll] = useState([...props.places]);
+  const locationState = useSnapshot(location);
 
   useEffect(() => {
+    if (locationState.latitude == null || locationState.longitude == null)
+      return;
 
-    if(locationState.latitude==null||locationState.longitude==null) return
-
-    setAll(cur => {
+    setAll((cur) => {
       return cur.map((d, i) => {
         return {
           ...d,
-          distance: calcDistance(locationState.latitude, locationState.longitude, d.latlng[0], d.latlng[1]),
-        }
-      })
-    })  
+          distance: calcDistance(
+            locationState.latitude,
+            locationState.longitude,
+            d.latlng[0],
+            d.latlng[1]
+          ),
+        };
+      });
+    });
   }, [locationState.latitude, locationState.longitude]);
 
   return (
@@ -201,6 +217,5 @@ export default function Index(props) {
       <Navbar />
       <MainContent all={all} />
     </div>
-  )
+  );
 }
-
