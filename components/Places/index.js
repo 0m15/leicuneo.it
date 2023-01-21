@@ -1,25 +1,6 @@
 import Link from "next/link";
 import { useMemo } from "react";
-
-function groupBy(array, key) {
-  return Object.values(
-    array.reduce((result, currentValue) => {
-      (result[currentValue[key]] = result[currentValue[key]] || []).push(
-        currentValue
-      );
-      return result;
-    }, {})
-  )
-    .map((children) => ({
-      key: children[0][key],
-      distance: children[0]["distance"],
-      slug: children[0]["slug"],
-      name: children[0]["name"],
-      address: children[0]["address"],
-      children,
-    }))
-    .sort((a, b) => a.distance - b.distance);
-}
+import { groupBy } from "../../utils";
 
 export function ListView({ places }) {
   const grouped = useMemo(() => {
@@ -29,12 +10,12 @@ export function ListView({ places }) {
   return (
     <div className="list-view">
       <div className="scroller-y">
-        {grouped.map((place) => {
+        {grouped.map((place, i) => {
           return (
             <Link
               href={`/places/${place.slug}`}
               className="list-item padding-1"
-              key={place.key}
+              key={i}
             >
               <div className="flex space-between">
                 <div>
@@ -43,9 +24,10 @@ export function ListView({ places }) {
                 </div>
                 {place.distance !== undefined && (
                   <div className="text-3">
-                    {place.distance < 0.25
+                    {place.distance}km
+                    {/* {place.distance < 0.25
                       ? (place.distance * 1000).toFixed(0) + "m"
-                      : place.distance + "km"}
+                      : place.distance + "km"} */}
                   </div>
                 )}
               </div>

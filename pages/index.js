@@ -9,6 +9,7 @@ import { location, state, tagsSelection } from "../store";
 import { calcDistance, toSlug } from "../utils";
 import data from "../data.json";
 import { useMemoOne } from "@react-spring/shared";
+import { CookieBanner } from "@palmabit/react-cookie-law";
 
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiYXVyb3JhbWVjY2FuaWNhIiwiYSI6ImNsMnN3NWU5ZzAydTkzY2xydG8xdzB2dXEifQ.CUgsrj8QK3zSeDdUejuwmw";
@@ -198,15 +199,19 @@ export default function Index(props) {
       return;
 
     setAll((cur) => {
-      return cur.map((d, i) => {
+      return cur.map((item, i) => {
+        let lat = item.latlng[0];
+        let lng = item.latlng[1];
+
+        let dist = calcDistance(
+          locationState.latitude,
+          locationState.longitude,
+          lat,
+          lng
+        );
         return {
-          ...d,
-          distance: calcDistance(
-            locationState.latitude,
-            locationState.longitude,
-            d.latlng[0],
-            d.latlng[1]
-          ),
+          ...item,
+          distance: dist,
         };
       });
     });

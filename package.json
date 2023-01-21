@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/font": "13.1.1",
+    "@palmabit/react-cookie-law": "^0.7.0",
     "@react-spring/web": "^9.6.1",
     "@use-gesture/react": "^10.2.23",
     "eslint": "8.31.0",
@@ -17,6 +18,7 @@
     "lodash.clamp": "^4.0.3",
     "next": "13.1.1",
     "react": "18.2.0",
+    "react-cookie-consent": "^8.0.1",
     "react-dom": "18.2.0",
     "react-map-gl": "^7.0.20",
     "react-use": "^17.4.0",

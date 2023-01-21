@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from "next/document";
+import { CookieBanner } from "@palmabit/react-cookie-law";
 
 export default function Document() {
   return (

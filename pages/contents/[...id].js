@@ -22,6 +22,9 @@ export function getStaticPaths() {
 export function getStaticProps({ params }) {
   //https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes
   const post = data.find((d, i) => d.path == params.id.join("/"));
+
+  console.log(post);
+
   const relatedContent = data
     .filter(
       (d, i) => d.path.split("/")[0] == params.id[0] && d.path !== post.path
@@ -47,7 +50,7 @@ export function getStaticProps({ params }) {
 export default function Post({
   name,
   slug,
-  photo,
+  photo_count,
   meta_4,
   description,
   media_type,
@@ -104,7 +107,7 @@ export default function Post({
           </div>
         )}
         {media_type === "gallery" && (
-          <Gallery basePath={path} numPhotos={photo} />
+          <Gallery basePath={path} numPhotos={photo_count} />
         )}
       </div>
       <RelatedContent

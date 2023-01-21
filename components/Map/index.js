@@ -79,18 +79,11 @@ function Geolocation() {
     function success(pos) {
       const crd = pos.coords;
 
-      console.log("Your current position is:");
-      console.log(`Latitude : ${crd.latitude}`);
-      console.log(`Longitude: ${crd.longitude}`);
-      console.log(`More or less ${crd.accuracy} meters.`);
-
       location.latitude = crd.latitude;
       location.longitude = crd.longitude;
     }
 
-    function error(err) {
-      console.warn(`ERROR(${err.code}): ${err.message}`);
-    }
+    function error(err) {}
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   }, []);
@@ -127,14 +120,13 @@ function GeolocationButton({}) {
 export default function MapView(props) {
   const tags = useSnapshot(tagsSelection);
   const grouped = useMemo(() => {
-    return groupBy(props.places, "place_id");
-  }, [props.places]);
+    return groupBy(props.all, "place_id");
+  }, [props.all]);
 
   const [popup, setPopupInfo] = useState(null);
 
   const pins = useMemo(() => {
     if (!grouped) return [];
-
     return grouped.map((place, index) => (
       <Marker
         key={`marker-${index}`}

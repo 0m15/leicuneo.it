@@ -78,13 +78,30 @@ export default function Post({
           width: "100%",
           minHeight: 480,
           backgroundImage: `url(/media/${baseUrl}/copertina.jpg)`,
-          zIndex: -1,
+          zIndex: 0,
         }}
       >
-        <div className="padding-1" ref={hero}>
-          <div className="flex space-between items-center">
-            <div className="bg-white padding-1">
-              <h1 className="text-0 text-800">{name}</h1>
+        <div
+          ref={hero}
+          className="w-100 bg-white"
+          style={{ position: "relative", zIndex: 10 }}
+        >
+          <div className="flex w-100" style={{ alignItems: "stretch" }}>
+            <div className="pt-1 pr-1 pb-1" style={{ minHeight: "100%" }}>
+              <Link href={`/`} style={{ display: "block" }}>
+                <Back />
+              </Link>
+            </div>
+            <div
+              className="flex-column bg-white padding-1"
+              style={{ minHeight: "100%" }}
+            >
+              <h1
+                className="text-0 text-800"
+                style={{ marginRight: "1em", lineHeight: 1.1 }}
+              >
+                {name}
+              </h1>
               <div className="text-1 text-700">{address}</div>
             </div>
           </div>
